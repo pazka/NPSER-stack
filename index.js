@@ -1,64 +1,39 @@
-const storage = require('node-persist');
-const express = require('express')
-const app = express()
-const httpServer = require('http').createServer(app);
-const io = require('socket.io')(httpServer,{
-    
-});
-
-const cors = require('cors');
-const bodyParser = require('body-parser');
-const morgan = require('morgan');
-const path = require('path')
-//var router = express.Router();
-//you must first call storage.init
-storage.init( /* options ... */);
-
-const PORT = 9001
-
-app.use(cors());
-app.use(bodyParser.json());
+"use strict";
+exports.__esModule = true;
+var express = require("express");
+var app = express();
+var http = require("http");
+var httpServer = http.createServer(app);
+var cors = require("cors");
+var bodyParser = require("body-parser");
+var morgan = require("morgan");
+var path = require("path");
+var api_1 = require("./Services/api");
+var sockets = require("./Services/sockets");
+var env_1 = require("./Services/env");
+app.use(cors({
+    origin: function (origin, callback) {
+        if (!origin)
+            return callback(null, true);
+        if (env_1["default"].allowedOrigin.indexOf(origin) === -1) {
+            var msg = 'The CORS policy for this site does not ' +
+                'allow access from the specified Origin.';
+            return callback(new Error(msg), false);
+        }
+        return callback(null, true);
+    }
+}));
+app.options('*', cors());
+app.use(bodyParser.json({ limit: '100mb' }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan('combined'));
-
-app.use('/', express.static(path.join(__dirname, 'front/build')));
-
-app.get('/api/:id', function (req, res) {
-    storage.getItem(req.params.id).then(data => {
-        return res.send(data);
-    }, err => {
-        return res.send(err);
-    })
-})
-
-app.post('/api/:id', function (req, res) {
-    console.log(`storing ${req.body} into ${req.params.id}`)
-    storage.setItem(req.params.id, req.body).then(data => {
-        return res.send(data);
-    }, err => {
-        return res.send(err);
-    })
-})
-
-//websocket
-
-io.on('connection', socket => {
-    console.log('Client connected');
-
-    socket.on('connect', () => {
-        console.log(`${socket.conn.remoteAddress} connected`);
-    });
-    socket.emit("hello", socket.id);
-    socket.on("event", (data)=>{
-        console.log(data)
-    });
-
-    socket.on('disconnect', () => {
-        console.log(`${socket.conn.remoteAddress} disconnected`);
+app.use('/', express.static(path.join(__dirname, 'front/build/')));
+app.use('/api', api_1["default"]);
+Promise.all([
+    sockets.init(httpServer)
+]).then(function () {
+    httpServer.listen(env_1["default"].PORT, function () {
+        console.log('Listening on ' + env_1["default"].PORT);
     });
 });
-
-
-httpServer.listen(PORT, () => {
-    console.log('Listening on ' + PORT)
-});
+//# sourceMappingURL=index.js.map

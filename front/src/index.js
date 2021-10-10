@@ -3,11 +3,28 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import {
+    BrowserRouter,
+    Route
+} from 'react-router-dom';
+
+if(process.env.NODE_ENV === 'production'){
+    console.log("Have fun looking at the code !")
+    if(window.location.href.split('?')[1] !== "debug"){
+        console.log = ()=>{}
+        console.group = ()=>{}
+        console.groupEnd = ()=>{}
+        console.info = ()=>{}
+        console.warn = ()=>{}
+    }
+}
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+    <BrowserRouter>
+        <div>
+            <Route path="/" render={()=><App />}/>
+        </div>
+    </BrowserRouter >,
   document.getElementById('root')
 );
 
@@ -15,3 +32,4 @@ ReactDOM.render(
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
+
