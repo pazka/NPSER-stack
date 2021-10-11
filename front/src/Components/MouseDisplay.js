@@ -2,7 +2,6 @@ import {useState} from "react";
 import {On, send, sub} from "../services/events";
 import {useGlobalMouseMove} from "../Controller/DOMEvents";
 import {Accessibility} from '@material-ui/icons'
-import {getRoomName} from "../services/rest";
 
 
 export default function MouseDisplay() {
@@ -62,7 +61,6 @@ export default function MouseDisplay() {
 
     return (<div className={"mouse-container"}>
                 <div className={"info"}>
-                    <p>Room name : <b>{getRoomName()}</b></p>
                     <p>{Object.values(mice).length + 1} users in this room.</p>
                     <p>
                         <span> You are </span>
