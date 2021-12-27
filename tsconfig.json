@@ -7,7 +7,7 @@
     "sourceMap": true,
     "allowJs": false,
     "target": "es5",
-    "lib": ["es5","es2015.core","ES2020"]
+    "lib": ["es6"]
   },
   "files" : ["index.ts"],
   "include": ["*.ts"],
